@@ -3,7 +3,7 @@ import sys
 import bdb
 
 class pdbg(bdb.Bdb):
-    def __init__(self, file, format="{varname} {{ {prevvalue} => {newvalue} }}", seperator=", ", variable=[], outputfile=""):
+    def __init__(self, file, format="{var_name} {{ {pre_value} => {new_value} }}", seperator=", ", variable=[], outputfile=""):
         bdb.Bdb.__init__(self, skip = None)
         import __main__
         __main__.__dict__.clear()
@@ -47,9 +47,9 @@ class pdbg(bdb.Bdb):
             if len(tempvars) > 0:
                 formattedResult = []
                 for i in [*tempvars]:
-                    formattedResult.append(self.format.format(varname = i,
-                                                              prevvalue = self.prevlocals[i] if i in self.prevlocals else None,
-                                                              newvalue = str(tempvars[i])))
+                    formattedResult.append(self.format.format(var_name = i,
+                                                              pre_value = self.prevlocals[i] if i in self.prevlocals else None,
+                                                              new_value = str(tempvars[i])))
                 tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
             else:
                 tobeprint = ["[Debug]", self.prevline]
