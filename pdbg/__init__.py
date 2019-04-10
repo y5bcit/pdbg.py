@@ -3,7 +3,7 @@ import sys
 import bdb
 
 class pdbg(bdb.Bdb):
-    def __init__(self, file, format="{varname} {{ {prevvalue} => {newvalue} }}", seperator=", ", variable=[], outputfile=""):
+    def __init__(self, file, format="{varname} {{ {prevvalue} => {newvalue} }}", seperator=", ", variable=[], outputfile="", funcfilter=[]):
         bdb.Bdb.__init__(self, skip = None)
         import __main__
         __main__.__dict__.clear()
@@ -22,11 +22,14 @@ class pdbg(bdb.Bdb):
         self.format = format
         self.seperator = seperator
         self.varfilter = variable
+        self.funcfilter = funcfilter
         self.run(statement)
 
     def user_line(self, frame):
         filename = self.canonic(frame.f_code.co_filename)
         if not filename == self.filepath:
+            return
+        if not frame.f_code.co_name in self.funcfilter and len(self.funcfilter) > 0:
             return
         changedvars = {}
         tempvars = {}
