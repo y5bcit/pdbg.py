@@ -4,6 +4,6 @@ def addSix(v):
     v = v + 3
     return v
 
-a = 1
+a = 1; b = 2; c = 43
 a = addSix(5)
 print(a)
