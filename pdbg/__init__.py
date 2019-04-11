@@ -5,7 +5,7 @@ import bdb
 
 class pdbg(bdb.Bdb):
 
-    def __init__(self, file: str, func_filter=[],var_filter=[],  output_file=None, seperator=", ", output_format="{var_name} {{ {pre_value} => {new_value} }}"):
+    def __init__(self, file: str, func_filter=[], var_filter=[],  output_file=None, seperator=", ", output_format="{var_name} {{ {pre_value} => {new_value} }}"):
         """Constructor for pdbg class. Parameters are used for choosing file and controlling output
 
         Args:
@@ -24,9 +24,11 @@ class pdbg(bdb.Bdb):
         import __main__
         __main__.__dict__.clear()
         import builtins
-        __main__.__dict__.update({"__name__": "__main__", "__file__": file, "__builtins__": builtins})
+        __main__.__dict__.update(
+            {"__name__": "__main__", "__file__": file, "__builtins__": builtins})
         with open(file, "rb") as fp:
-            statement = "exec(compile(%r, %r, \"exec\"))" % (fp.read(), file)  # compile(source, filename, mode) #mode can be eval, exec, single
+            # compile(source, filename, mode) #mode can be eval, exec, single
+            statement = "exec(compile(%r, %r, \"exec\"))" % (fp.read(), file)
         import sys
         import os
         sys.path[0] = os.path.dirname(file)
@@ -50,12 +52,12 @@ class pdbg(bdb.Bdb):
             return
         if not frame.f_code.co_name in self.func_filter and len(self.func_filter) > 0:
             return
-		curframe = self.get_stack(frame, None)[1]
+        curframe = self.get_stack(frame, None)[1]
         if self.last_frame == None:
             self.last_frame = curframe
-		elif not self.last_frame == curframe:
-			self.last_frame = curframe
-			print("[DebugLog] Enter function", frame.f_code.co_name)
+        elif not self.last_frame == curframe:
+            self.last_frame = curframe
+            print("[DebugLog] Enter function", frame.f_code.co_name)
         changedvars = {}
         tempvars = {}
         if not self.initlocals:
@@ -76,14 +78,17 @@ class pdbg(bdb.Bdb):
                 formattedResult = []
                 for i in [*tempvars]:
                     formattedResult.append(self.output_format.format(var_name=i,
-                                                                     pre_value=self.prevlocals[i] if i in self.prevlocals else None,
+                                                                     pre_value=self.prevlocals[
+                                                                         i] if i in self.prevlocals else None,
                                                                      new_value=str(tempvars[i])))
                 #tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
-                tobeprint = ["[Debug]", '{:60}'.format( self.prevline),self.seperator.join(formattedResult)]
+                tobeprint = ["[Debug]", '{:60}'.format(
+                    self.prevline), self.seperator.join(formattedResult)]
             # else:
             #     tobeprint = ["[Debug]", self.prevline]
             if self.output_file:
                 with open(self.output_file, "a") as o:
+
                     o.write(" ".join(tobeprint))
                     o.write("\n")
             else:
@@ -92,7 +97,6 @@ class pdbg(bdb.Bdb):
         self.prevlocals = frame.f_locals.copy()  # copy a dict
         if filename[0] != "<":
             self.prevline = self.code_source[frame.f_lineno - 1].rstrip()
-            
 
     def _filter(self, variables):
         if len(self.var_filter) == 0:
