@@ -3,7 +3,7 @@ import sys
 import bdb
 
 class pdbg(bdb.Bdb):
-    def __init__(self, file, format="{var_name} {{ {pre_value} => {new_value} }}", seperator=", ", variable=[], outputfile=""):
+    def __init__(self, file, output_format="{var_name} {{ {pre_value} => {new_value} }}", seperator=", ", var_filter=[], func_filter=[], output_file=""):
         bdb.Bdb.__init__(self, skip = None)
         import __main__
         __main__.__dict__.clear()
@@ -15,21 +15,22 @@ class pdbg(bdb.Bdb):
         import os
         sys.path[0] = os.path.dirname(file)
         self.filepath = file.lower()
+        self.code_source = open(file).readlines()
         self.prevlocals = {}
         self.prevline = ""
-        self.outputfile = outputfile
+        self.output_file = output_file
         self.initlocals = False
-        self.format = format
+        self.output_format = output_format
         self.seperator = seperator
-        self.varfilter = variable
-        self.funcfilter = funcfilter
+        self.var_filter = var_filter
+        self.func_filter = func_filter
         self.run(statement)
 
     def user_line(self, frame):
         filename = self.canonic(frame.f_code.co_filename)
         if not filename == self.filepath:
             return
-        if not frame.f_code.co_name in self.funcfilter and len(self.funcfilter) > 0:
+        if not frame.f_code.co_name in self.func_filter and len(self.func_filter) > 0:
             return
         changedvars = {}
         tempvars = {}
@@ -50,27 +51,27 @@ class pdbg(bdb.Bdb):
             if len(tempvars) > 0:
                 formattedResult = []
                 for i in [*tempvars]:
-                    formattedResult.append(self.format.format(var_name = i,
-                                                              pre_value = self.prevlocals[i] if i in self.prevlocals else None,
-                                                              new_value = str(tempvars[i])))
+                    formattedResult.append(self.output_format.format(var_name = i,
+                                                                     pre_value = self.prevlocals[i] if i in self.prevlocals else None,
+                                                                     new_value = str(tempvars[i])))
                 tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
             else:
                 tobeprint = ["[Debug]", self.prevline]
-            if len(self.outputfile) > 0:
-                with open(self.outputfile, "a") as o:
+            if len(self.output_file) > 0:
+                with open(self.output_file, "a") as o:
                     o.write(" ".join(tobeprint))
                     o.write("\n")
             else:
                 print(*tobeprint)
         self.prevlocals = frame.f_locals.copy() # copy a dict
         if filename[0] != "<":
-            self.prevline = open(filename).readlines()[frame.f_lineno - 1].rstrip()
+            self.prevline = self.code_source[frame.f_lineno - 1].rstrip()
 
     def _filter(self, variables):
-        if len(self.varfilter) == 0:
+        if len(self.var_filter) == 0:
             return variables
         ret = {}
         for key in [*variables]:
-            if key in self.varfilter:
+            if key in self.var_filter:
                 ret[key] = variables[key]
         return ret
