@@ -22,11 +22,14 @@ class pdbg(bdb.Bdb):
         self.format = format
         self.seperator = seperator
         self.varfilter = variable
+        self.funcfilter = funcfilter
         self.run(statement)
 
     def user_line(self, frame):
         filename = self.canonic(frame.f_code.co_filename)
         if not filename == self.filepath:
+            return
+        if not frame.f_code.co_name in self.funcfilter and len(self.funcfilter) > 0:
             return
         changedvars = {}
         tempvars = {}
