@@ -3,7 +3,7 @@ import sys
 import bdb
 
 class pdbg(bdb.Bdb):
-    def __init__(self, file: str, func_filter=[], var_filter=[],  output_file=None, seperator=", ", output_format="{var_name} {{ {pre_value} => {new_value} }}"):
+    def __init__(self, file: str, func_filter=[], var_filter=[], output_file=None, seperator=", ", output_format="{var_name} {{ {pre_value} => {new_value} }}"):
         """Constructor for pdbg class. Parameters are used for choosing file and controlling output
 
         Args:
@@ -35,13 +35,13 @@ class pdbg(bdb.Bdb):
         self.code_source = open(file).readlines()
         self.prevlocals = {}
         self.prevline = ""
-        self.output_file = output_file
         self.initlocals = False
-        self.output_format = output_format
-        self.seperator = seperator
-        self.var_filter = var_filter
-        self.func_filter = func_filter
         self.last_frame = None
+        self.func_filter = [func_filter] if isinstance(func_filter, str) else func_filter
+        self.var_filter = [var_filter] if isinstance(var_filter, str) else var_filter
+        self.output_file = output_file
+        self.seperator = seperator
+        self.output_format = output_format
         self.run(statement)
 
     def user_line(self, frame):
