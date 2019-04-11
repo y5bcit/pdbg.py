@@ -51,12 +51,12 @@ class pdbg(bdb.Bdb):
         curframe = self.get_stack(frame, None)[1]
         if self.last_frame == None:
             self.last_frame = curframe
-        if not frame.f_code.co_name in self.func_filter and len(self.func_filter) > 0:
-            return
         if not self.last_frame == curframe:
             self.last_frame = curframe
             if frame.f_code.co_name in self.func_filter or len(self.func_filter) == 0:
                 print("[DebugLog] Enter function", frame.f_code.co_name)
+        if not frame.f_code.co_name in self.func_filter and len(self.func_filter) > 0:
+            return
         changedvars = {}
         tempvars = {}
         if not self.initlocals:
