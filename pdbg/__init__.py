@@ -2,15 +2,16 @@ import os
 import sys
 import bdb
 
+
 class pdbg(bdb.Bdb):
     def __init__(self, file, output_format="{var_name} {{ {pre_value} => {new_value} }}", seperator=", ", var_filter=[], func_filter=[], output_file=""):
-        bdb.Bdb.__init__(self, skip = None)
+        bdb.Bdb.__init__(self, skip=None)
         import __main__
         __main__.__dict__.clear()
         import builtins
-        __main__.__dict__.update({"__name__" : "__main__", "__file__" : file, "__builtins__": builtins })
+        __main__.__dict__.update({"__name__": "__main__", "__file__": file, "__builtins__": builtins})
         with open(file, "rb") as fp:
-            statement = "exec(compile(%r, %r, \"exec\"))" % (fp.read(), file) #compile(source, filename, mode) #mode can be eval, exec, single
+            statement = "exec(compile(%r, %r, \"exec\"))" % (fp.read(), file)  # compile(source, filename, mode) #mode can be eval, exec, single
         import sys
         import os
         sys.path[0] = os.path.dirname(file)
@@ -35,7 +36,7 @@ class pdbg(bdb.Bdb):
         changedvars = {}
         tempvars = {}
         if not self.initlocals:
-            self.initlocals = True # By default, variables like __main__ should be hide
+            self.initlocals = True  # By default, variables like __main__ should be hide
         else:
             for i in [*frame.f_locals]:
                 if not (i + "_")[0:2] == "__":
@@ -51,9 +52,9 @@ class pdbg(bdb.Bdb):
             if len(tempvars) > 0:
                 formattedResult = []
                 for i in [*tempvars]:
-                    formattedResult.append(self.output_format.format(var_name = i,
-                                                                     pre_value = self.prevlocals[i] if i in self.prevlocals else None,
-                                                                     new_value = str(tempvars[i])))
+                    formattedResult.append(self.output_format.format(var_name=i,
+                                                                     pre_value=self.prevlocals[i] if i in self.prevlocals else None,
+                                                                     new_value=str(tempvars[i])))
                 tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
             else:
                 tobeprint = ["[Debug]", self.prevline]
@@ -63,7 +64,7 @@ class pdbg(bdb.Bdb):
                     o.write("\n")
             else:
                 print(*tobeprint)
-        self.prevlocals = frame.f_locals.copy() # copy a dict
+        self.prevlocals = frame.f_locals.copy()  # copy a dict
         if filename[0] != "<":
             self.prevline = self.code_source[frame.f_lineno - 1].rstrip()
 
