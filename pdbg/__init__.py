@@ -79,7 +79,8 @@ class pdbg(bdb.Bdb):
                     o.write(" ".join(tobeprint))
                     o.write("\n")
             else:
-                print(*tobeprint)
+                if (tobeprint):
+                    print(*tobeprint)
         self.prevlocals = frame.f_locals.copy()  # copy a dict
         if filename[0] != "<":
             self.prevline = self.code_source[frame.f_lineno - 1].rstrip()
