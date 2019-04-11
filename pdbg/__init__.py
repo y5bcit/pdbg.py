@@ -30,6 +30,7 @@ class pdbg(bdb.Bdb):
         import sys
         import os
         sys.path[0] = os.path.dirname(file)
+        os.chdir(sys.path[0])
         self.filepath = file.lower()
         self.code_source = open(file).readlines()
         self.prevlocals = {}
