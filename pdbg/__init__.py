@@ -54,7 +54,8 @@ class pdbg(bdb.Bdb):
                     formattedResult.append(self.output_format.format(var_name = i,
                                                                      pre_value = self.prevlocals[i] if i in self.prevlocals else None,
                                                                      new_value = str(tempvars[i])))
-                tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
+                #tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
+                tobeprint = ["[Debug]", '{:40}'.format( self.prevline),self.seperator.join(formattedResult)]
             else:
                 tobeprint = ["[Debug]", self.prevline]
             if len(self.output_file) > 0:
@@ -66,6 +67,7 @@ class pdbg(bdb.Bdb):
         self.prevlocals = frame.f_locals.copy() # copy a dict
         if filename[0] != "<":
             self.prevline = self.code_source[frame.f_lineno - 1].rstrip()
+            
 
     def _filter(self, variables):
         if len(self.var_filter) == 0:
