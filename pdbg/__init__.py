@@ -4,7 +4,22 @@ import bdb
 
 
 class pdbg(bdb.Bdb):
-    def __init__(self, file, output_format="{var_name} {{ {pre_value} => {new_value} }}", seperator=", ", var_filter=[], func_filter=[], output_file=""):
+
+    def __init__(self, file: str, output_format="{var_name} {{ {pre_value} => {new_value} }}", seperator=", ", var_filter=[], func_filter=[], output_file=None):
+        """Constructor for pdbg class. Parameters are used for choosing file and controlling output
+
+        Args:
+            file (str): Absolute path to a Python script.
+            output_format (str, optional): Defaults to "{var_name} {{ {pre_value} => {new_value} }}". The format of the output for this tool.
+                - {var_name} will be the name of the variable,
+                - {pre-value} will be the initial variable
+                - {new_value} will be the variable after changes.
+            seperator (str, optional): Defaults to ", ". Seperator used when multiple variables are changed in one line.
+            var_filter (list, optional): Defaults to []. Filter the output by variables name.
+            func_filter (list, optional): Defaults to []. Filter the output by function name.
+            output_file (str, optional): Defaults to None. Redirect the output of pdbg to a file if specified. Will output by printing in console otherwise.
+        """
+
         bdb.Bdb.__init__(self, skip=None)
         import __main__
         __main__.__dict__.clear()
@@ -58,7 +73,7 @@ class pdbg(bdb.Bdb):
                 tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
             else:
                 tobeprint = ["[Debug]", self.prevline]
-            if len(self.output_file) > 0:
+            if self.output_file:
                 with open(self.output_file, "a") as o:
                     o.write(" ".join(tobeprint))
                     o.write("\n")
