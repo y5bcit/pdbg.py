@@ -41,6 +41,7 @@ class pdbg(bdb.Bdb):
         self.seperator = seperator
         self.var_filter = var_filter
         self.func_filter = func_filter
+        self.last_frame = None
         self.run(statement)
 
     def user_line(self, frame):
@@ -49,6 +50,12 @@ class pdbg(bdb.Bdb):
             return
         if not frame.f_code.co_name in self.func_filter and len(self.func_filter) > 0:
             return
+		curframe = self.get_stack(frame, None)[1]
+        if self.last_frame == None:
+            self.last_frame = curframe
+		elif not self.last_frame == curframe:
+			self.last_frame = curframe
+			print("[DebugLog] Enter function", frame.f_code.co_name)
         changedvars = {}
         tempvars = {}
         if not self.initlocals:
