@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pdbg-bcit",
-    version="0.0.1",
+    version="0.0.4",
     author="",
     author_email="",
     description="A Python debugger for learner which print out all changes.",

@@ -71,9 +71,9 @@ class pdbg(bdb.Bdb):
                                                                      pre_value=self.prevlocals[i] if i in self.prevlocals else None,
                                                                      new_value=str(tempvars[i])))
                 #tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
-                tobeprint = ["[Debug]", '{:40}'.format( self.prevline),self.seperator.join(formattedResult)]
-            else:
-                tobeprint = ["[Debug]", self.prevline]
+                tobeprint = ["[Debug]", '{:60}'.format( self.prevline),self.seperator.join(formattedResult)]
+            # else:
+            #     tobeprint = ["[Debug]", self.prevline]
             if self.output_file:
                 with open(self.output_file, "a") as o:
                     o.write(" ".join(tobeprint))
