@@ -2,9 +2,7 @@ import os
 import sys
 import bdb
 
-
 class pdbg(bdb.Bdb):
-
     def __init__(self, file: str, func_filter=[], var_filter=[],  output_file=None, seperator=", ", output_format="{var_name} {{ {pre_value} => {new_value} }}"):
         """Constructor for pdbg class. Parameters are used for choosing file and controlling output
 
@@ -50,14 +48,15 @@ class pdbg(bdb.Bdb):
         filename = self.canonic(frame.f_code.co_filename)
         if not filename == self.filepath:
             return
-        if not frame.f_code.co_name in self.func_filter and len(self.func_filter) > 0:
-            return
         curframe = self.get_stack(frame, None)[1]
         if self.last_frame == None:
             self.last_frame = curframe
-        elif not self.last_frame == curframe:
+        if not frame.f_code.co_name in self.func_filter and len(self.func_filter) > 0:
+            return
+        if not self.last_frame == curframe:
             self.last_frame = curframe
-            print("[DebugLog] Enter function", frame.f_code.co_name)
+            if frame.f_code.co_name in self.func_filter or len(self.func_filter) == 0:
+                print("[DebugLog] Enter function", frame.f_code.co_name)
         changedvars = {}
         tempvars = {}
         if not self.initlocals:
