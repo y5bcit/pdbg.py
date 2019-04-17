@@ -55,8 +55,13 @@ class pdbg(bdb.Bdb):
         if not self.last_frame == curframe:
             self.last_frame = curframe
             if frame.f_code.co_name in self.func_filter or len(self.func_filter) == 0:
-                print("[DebugLog] Enter function", frame.f_code.co_name)
-        if not frame.f_code.co_name in self.func_filter and len(self.func_filter) > 0:
+                if self.output_file:
+                    with open(self.output_file, "a") as o:
+                        o.write("[DebugLog] Enter function", frame.f_code.co_name)
+                        o.write("\n")
+                else:
+                    print("[DebugLog] Enter function", frame.f_code.co_name)
+        if frame.f_code.co_name not in self.func_filter and len(self.func_filter) > 0:
             return
         changedvars = {}
         tempvars = {}
@@ -65,7 +70,7 @@ class pdbg(bdb.Bdb):
         else:
             for i in [*frame.f_locals]:
                 if not (i + "_")[0:2] == "__":
-                    if not i in self.prevlocals:
+                    if i not in self.prevlocals:
                         changedvars[i] = frame.f_locals[i]
                     elif self.prevlocals[i] != frame.f_locals[i]:
                         changedvars[i] = frame.f_locals[i]
@@ -81,7 +86,7 @@ class pdbg(bdb.Bdb):
                                                                      pre_value=self.prevlocals[
                                                                          i] if i in self.prevlocals else None,
                                                                      new_value=str(tempvars[i])))
-                #tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
+                # tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
                 tobeprint = ["[Debug]", '{:60}'.format(
                     self.prevline), self.seperator.join(formattedResult)]
             # else:
