@@ -4,9 +4,7 @@ import bdb
 
 
 class pdbg(bdb.Bdb):
-
-
-    def __init__(self, file: str, output_format="{var_name} {{ {pre_value} => {new_value} }}", seperator=", ", var_filter=[], func_filter=[], output_file=None):
+    def __init__(self, file: str, func_filter=[], var_filter=[], output_file=None, seperator=", ", output_format="{var_name} {{ {pre_value} => {new_value} }}"):
         """Constructor for pdbg class. Parameters are used for choosing file and controlling output
 
         Args:
@@ -25,28 +23,39 @@ class pdbg(bdb.Bdb):
         import __main__
         __main__.__dict__.clear()
         import builtins
-        __main__.__dict__.update({"__name__": "__main__", "__file__": file, "__builtins__": builtins})
+        __main__.__dict__.update(
+            {"__name__": "__main__", "__file__": file, "__builtins__": builtins})
         with open(file, "rb") as fp:
-            statement = "exec(compile(%r, %r, \"exec\"))" % (fp.read(), file)  # compile(source, filename, mode) #mode can be eval, exec, single
+            # compile(source, filename, mode) #mode can be eval, exec, single
+            statement = "exec(compile(%r, %r, \"exec\"))" % (fp.read(), file)
         import sys
         import os
         sys.path[0] = os.path.dirname(file)
+        os.chdir(sys.path[0])
         self.filepath = file.lower()
         self.code_source = open(file).readlines()
         self.prevlocals = {}
         self.prevline = ""
-        self.output_file = output_file
         self.initlocals = False
-        self.output_format = output_format
+        self.last_frame = None
+        self.func_filter = [func_filter] if isinstance(func_filter, str) else func_filter
+        self.var_filter = [var_filter] if isinstance(var_filter, str) else var_filter
+        self.output_file = output_file
         self.seperator = seperator
-        self.var_filter = var_filter
-        self.func_filter = func_filter
+        self.output_format = output_format
         self.run(statement)
 
     def user_line(self, frame):
         filename = self.canonic(frame.f_code.co_filename)
         if not filename == self.filepath:
             return
+        curframe = self.get_stack(frame, None)[1]
+        if self.last_frame == None:
+            self.last_frame = curframe
+        if not self.last_frame == curframe:
+            self.last_frame = curframe
+            if frame.f_code.co_name in self.func_filter or len(self.func_filter) == 0:
+                print("[DebugLog] Enter function", frame.f_code.co_name)
         if not frame.f_code.co_name in self.func_filter and len(self.func_filter) > 0:
             return
         changedvars = {}
@@ -69,17 +78,22 @@ class pdbg(bdb.Bdb):
                 formattedResult = []
                 for i in [*tempvars]:
                     formattedResult.append(self.output_format.format(var_name=i,
-                                                                     pre_value=self.prevlocals[i] if i in self.prevlocals else None,
+                                                                     pre_value=self.prevlocals[
+                                                                         i] if i in self.prevlocals else None,
                                                                      new_value=str(tempvars[i])))
-                tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
-            else:
-                tobeprint = ["[Debug]", self.prevline]
+                #tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
+                tobeprint = ["[Debug]", '{:60}'.format(
+                    self.prevline), self.seperator.join(formattedResult)]
+            # else:
+            #     tobeprint = ["[Debug]", self.prevline]
             if self.output_file:
                 with open(self.output_file, "a") as o:
+
                     o.write(" ".join(tobeprint))
                     o.write("\n")
             else:
-                print(*tobeprint)
+                if (tobeprint):
+                    print(*tobeprint)
         self.prevlocals = frame.f_locals.copy()  # copy a dict
         if filename[0] != "<":
             self.prevline = self.code_source[frame.f_lineno - 1].rstrip()
