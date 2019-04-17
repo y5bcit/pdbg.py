@@ -57,10 +57,10 @@ class pdbg(bdb.Bdb):
             if frame.f_code.co_name in self.func_filter or len(self.func_filter) == 0:
                 if self.output_file:
                     with open(self.output_file, "a") as o:
-                        o.write("[DebugLog] Entering function " + frame.f_code.co_name)
+                        o.write("[Function] Entering function " + frame.f_code.co_name)
                         o.write("\n")
                 else:
-                    print("[DebugLog] Enter function", frame.f_code.co_name)
+                    print("[Function] Enter function", frame.f_code.co_name)
         if frame.f_code.co_name not in self.func_filter and len(self.func_filter) > 0:
             return
         changedvars = {}
