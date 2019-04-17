@@ -4,9 +4,12 @@
 
 - [pdbg.py](#pdbgpy)
   - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
   - [Installation](#installation)
   - [Usage](#usage)
   - [Options](#options)
+
+## Introduction
 
 **pdbg** is a debugging tool for python. It is designed to be a simple and lightweight tool for troubleshooting errors in Python code.
 
@@ -36,20 +39,20 @@ Running the `pdbg.pdbg()` method will run the script and output all the variable
 
 ## Options
 
-`pdbg`.**pdbg**(file, *output_format="\{var_name} {{ \{pre_value} => \{new_value} }}"*, *seperator=", "*, *var_filter=[]*, *func_filter=[]*, *output_file=""*)
+`pdbg`.**pdbg**(file, *func_filter=[]*,  *var_filter=[]*, *output_file=None*, *seperator=", "*,*output_format="\{var_name} {{ \{pre_value} => \{new_value} }}"*)
 * [Required] `file`
   * Absolute path to your Python script.
-* `output_format`
-  * The format of the output
-  * {var_name} will be the name of the variable,
-  * {pre-value} will be the initial variable
-  * {new_value} will be the variable after changes.
-  * Read [the Python doc](https://docs.python.org/3.7/library/string.html#format-string-syntax) for more about formatting.
-* `seperator`
-  * Seperator used when multiple variables are changed in one line.
-* `var_filter`
-  * Filter the output by variables name.
 * `func_filter`
   * Filter the output by function name.
+* `var_filter`
+  * Filter the output by variables name.
 * `output_file`
   * Defaults to None. Redirect the output of pdbg to a file if specified. Will output by printing in console otherwise
+* `seperator`
+  * Seperator used when multiple variables are changed in one line.
+* `output_format`
+  * A string that formats the output
+  * `{var_name}` will be the name of the variable,
+  * `{pre-value}` will be the initial variable
+  * `{new_value}` will be the variable after changes.
+* Read [the Python doc](https://docs.python.org/3.7/library/string.html#format-string-syntax) for more about formatting.

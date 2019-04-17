@@ -2,13 +2,14 @@ import os
 import sys
 import bdb
 
+
 class pdbg(bdb.Bdb):
     def __init__(self, file: str, func_filter=[], var_filter=[], output_file=None, seperator=", ", output_format="{var_name} {{ {pre_value} => {new_value} }}"):
         """Constructor for pdbg class. Parameters are used for choosing file and controlling output
 
         Args:
             file (str): Absolute path to a Python script.
-            output_format (str, optional): Defaults to "{var_name} {{ {pre_value} => {new_value} }}". The format of the output for this tool.
+            output_format (str, optional): Defaults to "{var_name} {{ {pre_value} => {new_value} }}". A string that formats the output.
                 - {var_name} will be the name of the variable,
                 - {pre-value} will be the initial variable
                 - {new_value} will be the variable after changes.
