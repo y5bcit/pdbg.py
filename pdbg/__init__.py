@@ -50,7 +50,7 @@ class pdbg(bdb.Bdb):
         if not filename == self.filepath:
             return
         curframe = self.get_stack(frame, None)[1]
-        if self.last_frame == None:
+        if self.last_frame is None:
             self.last_frame = curframe
         if not self.last_frame == curframe:
             self.last_frame = curframe
