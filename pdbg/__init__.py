@@ -4,7 +4,7 @@ import bdb
 
 
 class pdbg(bdb.Bdb):
-    def __init__(self, file: str, func_filter=[], var_filter=[], output_file=None, seperator=", ", output_format="{var_name} {{ {pre_value} => {new_value} }}"):
+    def __init__(self, file: str, func_filter=[], var_filter=[], output_file=None, separator=", ", output_format="{var_name} {{ {pre_value} => {new_value} }}"):
         """Constructor for pdbg class. Parameters are used for choosing file and controlling output
 
         Args:
@@ -13,7 +13,7 @@ class pdbg(bdb.Bdb):
                 - {var_name} will be the name of the variable,
                 - {pre-value} will be the initial variable
                 - {new_value} will be the variable after changes.
-            seperator (str, optional): Defaults to ", ". Seperator used when multiple variables are changed in one line.
+            separator (str, optional): Defaults to ", ". Separator used when multiple variables are changed in one line.
             var_filter (list, optional): Defaults to []. Filter the output by variables name.
             func_filter (list, optional): Defaults to []. Filter the output by function name.
             output_file (str, optional): Defaults to None. Redirect the output of pdbg to a file if specified. Will output by printing in console otherwise.
@@ -41,7 +41,7 @@ class pdbg(bdb.Bdb):
         self.func_filter = [func_filter] if isinstance(func_filter, str) else func_filter
         self.var_filter = [var_filter] if isinstance(var_filter, str) else var_filter
         self.output_file = output_file
-        self.seperator = seperator
+        self.separator = separator
         self.output_format = output_format
         self.run(statement)
 
@@ -60,7 +60,7 @@ class pdbg(bdb.Bdb):
                         o.write("[Function] Entering function " + frame.f_code.co_name)
                         o.write("\n")
                 else:
-                    print("[Function] Enter function", frame.f_code.co_name)
+                    print("[Function] Entering function", frame.f_code.co_name)
         if frame.f_code.co_name not in self.func_filter and len(self.func_filter) > 0:
             return
         changedvars = {}
@@ -86,9 +86,9 @@ class pdbg(bdb.Bdb):
                                                                      pre_value=self.prevlocals[
                                                                          i] if i in self.prevlocals else None,
                                                                      new_value=str(tempvars[i])))
-                # tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.seperator.join(formattedResult)]
+                # tobeprint = ["[Debug]", self.prevline, " " * (40 - len(self.prevline)), self.separator.join(formattedResult)]
                 tobeprint = ["[Debug]", '{:60}'.format(
-                    self.prevline), self.seperator.join(formattedResult)]
+                    self.prevline), self.separator.join(formattedResult)]
             # else:
             #     tobeprint = ["[Debug]", self.prevline]
             if self.output_file:
