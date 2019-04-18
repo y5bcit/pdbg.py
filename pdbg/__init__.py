@@ -30,6 +30,8 @@ class pdbg(bdb.Bdb):
             statement = "exec(compile(%r, %r, \"exec\"))" % (fp.read(), file)
         import sys
         import os
+        file = os.path.abspath(file)
+        self.scriptcwd = os.getcwd()
         sys.path[0] = os.path.dirname(file)
         os.chdir(sys.path[0])
         self.filepath = file.lower()
@@ -46,7 +48,7 @@ class pdbg(bdb.Bdb):
         self.run(statement)
 
     def user_line(self, frame):
-        filename = self.canonic(frame.f_code.co_filename)
+        filename = os.path.normcase(os.path.normpath(os.path.join(self.scriptcwd, frame.f_code.co_filename)))
         if not filename == self.filepath:
             return
         curframe = self.get_stack(frame, None)[1]
@@ -57,10 +59,10 @@ class pdbg(bdb.Bdb):
             if frame.f_code.co_name in self.func_filter or len(self.func_filter) == 0:
                 if self.output_file:
                     with open(self.output_file, "a") as o:
-                        o.write("[DebugLog] Entering function " + frame.f_code.co_name)
+                        o.write("[Function] Entering function " + frame.f_code.co_name)
                         o.write("\n")
                 else:
-                    print("[DebugLog] Enter function", frame.f_code.co_name)
+                    print("[Function] Enter function", frame.f_code.co_name)
         if frame.f_code.co_name not in self.func_filter and len(self.func_filter) > 0:
             return
         changedvars = {}

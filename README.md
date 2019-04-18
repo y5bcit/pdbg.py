@@ -59,7 +59,7 @@ python -c "import pdbg; pdbg.pdbg(r'$filepath', ['foo'])"
 And this would be our output:
 
 ```text
-[DebugLog] Entering function foo
+[Function] Entering function foo
 [Debug]     bar = 0                                                  bar { None => 0 }
 [Debug]     for i in range(3):                                       i { None => 0 }
 [Debug]         bar += 1                                             bar { 0 => 1 }
