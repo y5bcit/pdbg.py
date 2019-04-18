@@ -48,7 +48,7 @@ class pdbg(bdb.Bdb):
         self.run(statement)
 
     def user_line(self, frame):
-        filename = os.path.normcase(os.path.normpath(os.path.join(self.scriptcwd, frame.f_code.co_filename)))
+        filename = os.path.normcase(os.path.normpath(os.path.join(self.scriptcwd, frame.f_code.co_filename))).lower()
         if not filename == self.filepath:
             return
         curframe = self.get_stack(frame, None)[1]
