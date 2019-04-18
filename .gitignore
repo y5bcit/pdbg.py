@@ -1,1 +1,8 @@
 pdbg/_pycache/
+dist/
+pdbg_bcit.egg-info/
+test/
+build/
+*.pyc
+setup.py
+upload.bat
