@@ -50,7 +50,7 @@ def foo():
 foo()
 ```
 
-If we wanted to watch the variables changed in `foo()`, all we would have to do is open command line and run this command, with `$filepath` as the absolute path of the python file.
+If we wanted to watch the variables changed in `foo()`, all we would have to do is open command line and run this command, with `$filepath` as the path of the python file.
 
 ```cmd
 python -c "import pdbg; pdbg.pdbg(r'$filepath', ['foo'])"
@@ -74,15 +74,15 @@ And this would be our output:
 
 `pdbg`.**pdbg**(file, *func_filter=[]*,  *var_filter=[]*, *output_file=None*, *seperator=", "*,*output_format="\{var_name} {{ \{pre_value} => \{new_value} }}"*)
 * [Required] `file`
-  * Absolute path to your Python script.
+  * Path to your Python script.
 * `func_filter`
   * Filter the output by function name.
 * `var_filter`
   * Filter the output by variables name.
 * `output_file`
   * Defaults to None. Redirect the output of pdbg to a file if specified. Will output by printing in console otherwise
-* `seperator`
-  * Seperator used when multiple variables are changed in one line.
+* `separator`
+  * Separator used when multiple variables are changed in one line.
 * `output_format`
   * A string that formats the output
   * `{var_name}` will be the name of the variable,
