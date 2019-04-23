@@ -28,10 +28,11 @@ pip install pdbg-bcit
 
 ## Usage
 
-Using this tool is very simple. In Windows, open CMD in the folder that you would normally run your python script. Then, enter the below command, with `$filepath` as the absolute path of the python script you want to debug.
+Using this tool is very simple. Open your terminal and start python. Then, enter the below script, with `$filepath` as the relative path of the python script you want to debug.
 
-```cmd
-python -c "import pdbg; pdbg.pdbg(r'$filepath')"
+```python
+import pdbg
+pdbg.pdbg(r"$filepath")
 ```
 
 This method will run the script and output all the variable definitions and changes in the targeted file. More options for this method are detailed in [options](#options).
@@ -50,10 +51,11 @@ def foo():
 foo()
 ```
 
-If we wanted to watch the variables changed in `foo()`, all we would have to do is open command line and run this command, with `$filepath` as the path of the python file.
+If we wanted to watch the variables changed in `foo()`, all we would have to do is open python and run this script, with `$filepath` as the path of the python file.
 
-```cmd
-python -c "import pdbg; pdbg.pdbg(r'$filepath', ['foo'])"
+```python
+import pdbg
+pdbg.pdbg(r"$filepath", "foo")
 ```
 
 And this would be our output:
@@ -72,20 +74,33 @@ And this would be our output:
 
 ## Options
 
-`pdbg`.**pdbg**(file, *func_filter=[]*,  *var_filter=[]*, *output_file=None*, *seperator=", "*,*output_format="\{var_name} {{ \{pre_value} => \{new_value} }}"*)
+`pdbg`.**pdbg**(file, *func_filter=[]*,  *var_filter=[]*, *output_file=None*, *separator=", "*,*output_format="\{var_name} {{ \{pre_value} => \{new_value} }}"*)
+
 * [Required] `file`
+
   * Path to your Python script.
 * `func_filter`
+
   * Filter the output by function name.
 * `var_filter`
+
   * Filter the output by variables name.
 * `output_file`
+
   * Defaults to None. Redirect the output of pdbg to a file if specified. Will output by printing in console otherwise
 * `separator`
+
   * Separator used when multiple variables are changed in one line.
 * `output_format`
+
   * A string that formats the output
-  * `{var_name}` will be the name of the variable,
-  * `{pre-value}` will be the initial variable
-  * `{new_value}` will be the variable after changes.
-* Read [the Python doc](https://docs.python.org/3.7/library/string.html#format-string-syntax) for more about formatting.
+
+    * Placeholders:
+
+      `{var_name}`: The name of the variable,
+
+      `{pre-value}`: The initial variable
+
+      `{new_value}`: The variable after changes.
+
+    * Read [the Python doc](https://docs.python.org/3.7/library/string.html#format-string-syntax) for more about formatting.
